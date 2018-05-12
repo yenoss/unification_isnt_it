@@ -1,4 +1,31 @@
+## Installation
+
+* Chrome Web Driver
+* Selenium 
+
+
+
+## TweetCrawler Run & Test
+
+* TweetCrawler Run
+
+```
+> python3 crawler/tweetCrawler.py
+```
+
+* TweetCrawler test
+
+```
+> cd test
+> python3 test.py
+```
+
+
+
+
+
 ## 주제: 통일 어떻게 생각하세요?
+
 > 통일에 대한 사람들의 생각은 어떨까?
 
 ### 1.선정 이유
@@ -31,7 +58,7 @@
 		1. 긍정/ 부정 사전을 이용하여 토큰화된 단어가 긍정사전에 있으면 스코어 +주고 부정사전에 있으면 -를 줍니다.
 		2. 해당 글이 긍정인지 부정인지 score로 나타내도록 한다.
 
-	3. 관련코드 	
+			 관련코드 	
 
 ```
 # Word2Vec embedding
