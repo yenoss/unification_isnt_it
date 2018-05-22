@@ -1,7 +1,11 @@
 ## Installation
 
-* Chrome Web Driver
-* Selenium 
+* Chrome Web Driver 
+* pip3
+
+```
+> pip3 install -r requirements.txt
+```
 
 
 
@@ -13,7 +17,10 @@
 > python3 crawler/tweetCrawler.py
 ```
 
-* TweetCrawler test
+* test
+  * 해당 테스트는 단순히 설치된 두 개의 라이브러리가 잘 작동되는지만을 체크합니다. 
+    * tweet
+    * konlpy
 
 ```
 > cd test

@@ -1,0 +1,4 @@
+JPype1==0.6.3
+konlpy==0.4.4
+numpy==1.14.3
+selenium==3.12.0
