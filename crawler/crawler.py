@@ -1,20 +1,23 @@
+
+
 # 트위터 검색: https://twitter.com/search?q=통일&src=typd&lang=ko 
 # 상세 주소: https://twitter.com/won0207/status/992484290091859968
 
 import time
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+import json
+
 result = []
 
 def crawler(driver,cursor):	
 	
-	# driver = webdriver.PhantomJS()s
+	# driver = webdriver.PhantomJS()
 	streams = driver.find_element_by_id('stream-items-id')
 	items = streams.find_elements_by_class_name("stream-item")	
 	for index,item in enumerate(items):
 		if(index>=cursor):
 			tmp_json = {}
-			# print(item.text)
 			data_id = item.get_attribute("data-item-id");
 			nick_name = item.find_element_by_class_name('FullNameGroup')
 			id_name =  item.find_element_by_class_name('username')
@@ -33,12 +36,22 @@ def crawler(driver,cursor):
 			print("id: "+id_name.text.strip())
 			print("time: "+time_stamp.strip())
 			print("txt: "+tweet_text.text.strip())	
+
+
 			tmp_json["data_id"] = data_id
+			tmp_json["nick"] = nick_name.strip()
+			tmp_json["id"] = id_name.text.strip()
+			tmp_json["text"] = tweet_text.text.strip()
+			tmp_json["comment_cnt"] = reflections[0].text
+			tmp_json["retweet_cnt"] = reflections[1].text
+			tmp_json["like_cnt"] = reflections[3].text			
+			tmp_json["time"] = float(time_stamp) - (7 * 3600)
 
 			result.append(tmp_json)
-
 	
 
+	with open('out/result.json', 'w',encoding='utf-8') as fp:
+	    json.dump(result, fp,ensure_ascii=False,indent=4, sort_keys=True)
 
 
 
@@ -49,8 +62,6 @@ def runCrawler(search_word,page):
 	# driver = webdriver.PhantomJS('/Users/yenos/Documents/sangmyung/big/phantomjs-2.1.1-macosx/phantomjs-2.1.1-macosx/bin/phantomjs')	
 	driver.get("https://twitter.com/search?q="+search_word+"&src=typd&lang=ko")
 	
-
-	# crawler(0,40);	
 	while(cursor<page*20) :		
 		print("cursor: "+str(cursor))
 		crawler(driver,cursor)	
@@ -63,7 +74,7 @@ def runCrawler(search_word,page):
 
 if __name__=="__main__":
 	# set
-	finalResult = runCrawler("통일",3)
+	finalResult = runCrawler("통일",1)
 	print("==== result ====");
 	print(finalResult)
 	
