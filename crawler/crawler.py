@@ -6,9 +6,12 @@
 import time
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from datetime import datetime
 import json
 
+
 result = []
+crawling_start_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
 def crawler(driver,cursor):	
 	
@@ -48,13 +51,6 @@ def crawler(driver,cursor):
 			tmp_json["time"] = float(time_stamp) - (7 * 3600)
 
 			result.append(tmp_json)
-	
-
-	with open('out/result.json', 'w',encoding='utf-8') as fp:
-	    json.dump(result, fp,ensure_ascii=False,indent=4, sort_keys=True)
-
-
-
 
 def runCrawler(search_word,page):
 	cursor = 0;
@@ -67,14 +63,28 @@ def runCrawler(search_word,page):
 		crawler(driver,cursor)	
 		driver.execute_script("window.scrollTo(0, document.body.scrollHeight)");	
 		time.sleep(2)   
-		cursor += 20
-		print("result Length: "+str(len(result)))
+		cursor += 20		
+	return addMetaData(search_word)
 
-	return result
+def addMetaData(search_word):
+	final_dic = {}
+	final_dic["search_word"] = search_word
+	final_dic["end_time"] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+	final_dic["start_time"] = crawling_start_time
+	final_dic["data"] = result	
+	final_dic["data_length"] = len(result)
+	return final_dic
+
 
 if __name__=="__main__":
 	# set
+
 	finalResult = runCrawler("통일",1)
 	print("==== result ====");
 	print(finalResult)
+
+	with open('out/result.json', 'w',encoding='utf-8') as fp:
+	    json.dump(finalResult, fp,ensure_ascii=False,indent=4, sort_keys=True)
+
+	
 	
