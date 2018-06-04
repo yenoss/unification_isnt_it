@@ -3,16 +3,22 @@
 # 트위터 검색: https://twitter.com/search?q=통일&src=typd&lang=ko 
 # 상세 주소: https://twitter.com/won0207/status/992484290091859968
 
+
+import sys
+sys.path.insert(0,'..')
 import time
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from datetime import datetime
+from common import util
+from manager import DBManager
+from model import tweetModel
+import os
 import json
 
-
-result = []
+parent_dir = os.path.abspath('..')
 crawling_start_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-
+result = []
 def crawler(driver,cursor):	
 	
 	# driver = webdriver.PhantomJS()
@@ -42,13 +48,39 @@ def crawler(driver,cursor):
 
 
 			tmp_json["data_id"] = data_id
-			tmp_json["nick"] = nick_name.strip()
-			tmp_json["id"] = id_name.text.strip()
+			tmp_json["user_nick"] = nick_name.strip()
+			tmp_json["user_id"] = id_name.text.strip()
 			tmp_json["text"] = tweet_text.text.strip()
 			tmp_json["comment_cnt"] = reflections[0].text
 			tmp_json["retweet_cnt"] = reflections[1].text
 			tmp_json["like_cnt"] = reflections[3].text			
 			tmp_json["time"] = float(time_stamp) - (7 * 3600)
+
+			
+
+			user_id = tmp_json["user_id"]
+			user_nick = tmp_json["user_nick"]			
+			user = tweetModel.getUser(user_id,user_nick)
+
+			if len(user)==0:
+				print("new! addd")
+				tweetModel.setUser(user_id,user_nick)
+				user = tweetModel.getUser(user_id,user_nick)
+			else:
+				print("already has")
+
+			print(user)
+			tweetModel.setTweet(user[0]["id"],
+								tmp_json["data_id"],
+								tmp_json["text"],
+								tmp_json["comment_cnt"],
+								tmp_json["retweet_cnt"],
+								tmp_json["like_cnt"],
+								datetime.fromtimestamp(
+									int(tmp_json["time"])
+								).strftime('%Y-%m-%d %H:%M:%S')							
+								)	
+
 
 			result.append(tmp_json)
 
@@ -77,13 +109,12 @@ def addMetaData(search_word):
 
 
 if __name__=="__main__":
-	# set
-
+	
 	finalResult = runCrawler("통일",1)
 	print("==== result ====");
 	print(finalResult)
 
-	with open('out/result.json', 'w',encoding='utf-8') as fp:
+	with open(parent_dir+'/out/result.json', 'w',encoding='utf-8') as fp:
 	    json.dump(finalResult, fp,ensure_ascii=False,indent=4, sort_keys=True)
 
 	
