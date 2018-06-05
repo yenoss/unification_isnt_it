@@ -19,6 +19,7 @@ import json
 parent_dir = os.path.abspath('..')
 crawling_start_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 result = []
+search_id = ""
 def crawler(driver,cursor):	
 	try:
 		# driver = webdriver.PhantomJS()
@@ -80,6 +81,7 @@ def crawler(driver,cursor):
 										int(tmp_json["time"])
 									).strftime('%Y-%m-%d %H:%M:%S')							
 									)	
+				tweetModel.setSearchMeta(search_id,tmp_json["data_id"])
 
 
 				result.append(tmp_json)
@@ -113,7 +115,14 @@ def addMetaData(search_word):
 
 if __name__=="__main__":
 	
-	finalResult = runCrawler("통일",2)
+	search_name  ="통일"
+	size = 2
+	tweetModel.setSearch(search_name,size,datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+	
+	search_id = tweetModel.getSearch(search_name)[0]["id"]
+	
+	finalResult = runCrawler(search_name,size)
+
 	print("==== result ====");
 	print(finalResult)
 
