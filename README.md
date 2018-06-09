@@ -14,7 +14,7 @@
 * TweetCrawler Run
 
 ```
-> python3 crawler/tweetCrawler.py
+> python3 tweetCrawler.py {keyword} {%Y-%m-%d-%H:%M:%S}
 ```
 
 * test
