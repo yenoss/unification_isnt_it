@@ -20,13 +20,24 @@ parent_dir = os.path.abspath('..')
 crawling_start_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 result = []
 search_id = ""
-def crawler(driver,cursor):	
+def crawler(driver,cursor,end_date):	
 	try:
-		# driver = webdriver.PhantomJS()
+
 		streams = driver.find_element_by_id('stream-items-id')
 		items = streams.find_elements_by_class_name("stream-item")	
+
+		size_diff = len(items)-len(result) 
+
+
+		if(len(result) > len(items)):
+			time.sleep(2)   
+			streams = driver.find_element_by_id('stream-items-id')
+			items = streams.find_elements_by_class_name("stream-item")	
+
+
 		for index,item in enumerate(items):
-			if(index>=cursor):
+			print("index: "+str(index))
+			if(index>=cursor):				
 				tmp_json = {}
 				data_id = item.get_attribute("data-item-id");
 				nick_name = item.find_element_by_class_name('FullNameGroup')
@@ -38,13 +49,13 @@ def crawler(driver,cursor):
 				nick_name = nick_name.text
 				nick_name = nick_name.replace("\n","")
 				
-				print("data-id: "+data_id)
-				print("comment: "+reflections[0].text)
-				print("retweet: "+reflections[1].text)		
-				print("like: "+reflections[3].text)
+				# print("data-id: "+data_id)
+				# print("comment: "+reflections[0].text)
+				# print("retweet: "+reflections[1].text)		
+				# print("like: "+reflections[3].text)
 				print("nick: "+nick_name.strip())
-				print("id: "+id_name.text.strip())
-				print("time: "+time_stamp.strip())
+				# print("id: "+id_name.text.strip())
+				# print("time: "+time_stamp.strip())
 				print("txt: "+tweet_text.text.strip())	
 
 
@@ -56,21 +67,29 @@ def crawler(driver,cursor):
 				tmp_json["retweet_cnt"] = reflections[1].text if len(reflections[1].text)!=0 else 0									
 				tmp_json["like_cnt"] = reflections[3].text if len(reflections[3].text)!=0 else 0									
 				tmp_json["time"] = float(time_stamp) - (7 * 3600)
+				
+
+				end_date_timestamp = time.mktime(datetime.strptime(end_date, "%Y-%m-%d-%H:%M:%S").timetuple()) + (9*3600)
+				print(tmp_json["time"])
+				print(end_date_timestamp)
+				if(end_date_timestamp>tmp_json["time"]):
+					return -99
 
 				
 
 				user_id = tmp_json["user_id"]
 				user_nick = tmp_json["user_nick"]			
 				user = tweetModel.getUser(user_id,user_nick)
+				published_date = datetime.fromtimestamp(
+										int(tmp_json["time"])
+									)
+				
+
 
 				if len(user)==0:
-					print("new! addd")
 					tweetModel.setUser(user_id,user_nick)
 					user = tweetModel.getUser(user_id,user_nick)
-				else:
-					print("already has")
 
-				print(user)
 				tweetModel.setTweet(user[0]["id"],
 									tmp_json["data_id"],
 									tmp_json["text"],
@@ -85,22 +104,28 @@ def crawler(driver,cursor):
 
 
 				result.append(tmp_json)
+			
+		return size_diff
+
 	except Exception as e:
 		print(str(e))
 
 
-def runCrawler(search_word,page):
+def runCrawler(search_word,end_date):
 	cursor = 0;
 	driver = webdriver.Chrome('/Users/yenos/Documents/sangmyung/big/chromedriver_mac64/chromedriver')
 	# driver = webdriver.PhantomJS('/Users/yenos/Documents/sangmyung/big/phantomjs-2.1.1-macosx/phantomjs-2.1.1-macosx/bin/phantomjs')	
 	driver.get("https://twitter.com/search?q="+search_word+"&src=typd&lang=ko")
 	
-	while(cursor<page*20) :		
-		print("cursor: "+str(cursor))
-		crawler(driver,cursor)	
+	while(1) :		
+		addedPage = crawler(driver,cursor,end_date)			
+		print(addedPage)
+		if addedPage == -99:
+			break;
 		driver.execute_script("window.scrollTo(0, document.body.scrollHeight)");	
-		time.sleep(2)   
-		cursor += 20		
+		time.sleep(1)   
+		cursor += addedPage	
+
 	return addMetaData(search_word)
 
 def addMetaData(search_word):
@@ -113,15 +138,25 @@ def addMetaData(search_word):
 	return final_dic
 
 
+
+
+# print ('Number of arguments:', len(sys.argv), 'arguments.')
+# print ('Argument List:', str(sys.argv))
+
 if __name__=="__main__":
 	
-	search_name  ="통일"
-	size = 2
-	tweetModel.setSearch(search_name,size,datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+	# serched_time = "2018-06-05 13:11:11"
+	# t = time.mktime(datetime.strptime(s, "%Y-%m-%d %H:%M:%S").timetuple()) + (9*3600)
+	# print(t)
+	
+	search_name  = sys.argv[1]
+	
+	end_date = sys.argv[2]
+	tweetModel.setSearch(search_name,end_date,datetime.now().strftime('%Y-%m-%d-%H:%M:%S'))
 	
 	search_id = tweetModel.getSearch(search_name)[0]["id"]
 	
-	finalResult = runCrawler(search_name,size)
+	finalResult = runCrawler(search_name,end_date)
 
 	print("==== result ====");
 	print(finalResult)
