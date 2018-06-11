@@ -78,4 +78,24 @@ def getAllTweets():
 					"""
 					,
 					()
-				))		
+				))	
+def getAllValidTweets():
+	return util.fetch_all_json(
+				DBManager.query(
+					"""
+					SELECT * FROM  uni_tweets WHERE isValid =1
+					"""
+					,
+					()
+				))						
+
+def setTweetValid(data_id):
+	DBManager.query(
+					"""
+					UPDATE uni_tweets 
+					SET isValid = 0 
+					WHERE data_id = %s
+					"""
+					,
+					(data_id,)
+				)			

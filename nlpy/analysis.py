@@ -29,12 +29,12 @@ class Analaysis:
 		f.close()
 		return arr
 
-	def checkSentiment(self):
+	def checkSentiment(self,nlpy_sententse):
 		posScore = 0;
 		negScore = 0;
 		sumScore = 0;
 
-		for nous in self.nousList:
+		for nous in nlpy_sententse:
 			for pos in self.positive_arr:
 				# 긍정 사전안에 포함되었다면
 				if pos in nous:
