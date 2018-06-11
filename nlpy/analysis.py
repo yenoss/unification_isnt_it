@@ -8,11 +8,11 @@ from konlpy.utils import pprint
 class Analaysis:
 	def __init__(self):
 		self.kkma = Kkma()	
-		
+		self.senti_result = "-"
+		self.makeDic()
 
-	def getNounsList(self,sentence):	
-		self.nousList = self.kkma.nouns(sentence)
-		print(self.nousList)
+	def getNounsList(self,sentence,length=0):			
+		self.nousList = list(filter(lambda x: len(x) > length, self.kkma.nouns(sentence)))		
 		return self.nousList
 
 	def makeDic(self):
@@ -38,23 +38,25 @@ class Analaysis:
 			for pos in self.positive_arr:
 				# 긍정 사전안에 포함되었다면
 				if pos in nous:
-					print(pos)
+					print("p-> "+pos)
 					posScore =  posScore + 1;
 			for neg in self.negative_arr:
 				# 부정 사전안에 포함되었다면
 				if neg in nous:
-					print(neg)
+					print("n-> "+neg)
 					negScore =  negScore + 1;									
 
-		print("posScore = " + str(posScore))
-		print("negScore = " + str(negScore))
-		sumScore = posScore + negScore 
-		print("sumScore = " + str(sumScore))
+		# print("posScore = " + str(posScore))
+		# print("negScore = " + str(negScore))
+		# print("sumScore = " + str(sumScore))		
+		sumScore = posScore + negScore 	
 
-		if sumScore>0:
-			return 1
+		if sumScore==0:
+			return "-"
+		elif sumScore>0:
+			return "P"
 		else :
-			return 0
+			return "N"
 
 
 # a = Analaysis()

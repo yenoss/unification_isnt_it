@@ -68,3 +68,14 @@ def setSearchMeta(search_id,tweet_data_id):
 					,
 					(search_id,tweet_data_id)
 				)			
+
+def getAllTweets():
+	return util.fetch_all_json(
+				DBManager.query(
+					"""
+					SELECT * 
+					FROM uni_tweets
+					"""
+					,
+					()
+				))		

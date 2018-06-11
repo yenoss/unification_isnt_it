@@ -9,7 +9,7 @@ import os
 
 
 import os
-parent_dir = os.path.abspath('..')
+parent_dir = os.path.abspath('')
 
 with open(parent_dir+'/key/conf.json') as conf_json:
     conf = json.load(conf_json)

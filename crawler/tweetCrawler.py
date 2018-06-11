@@ -25,9 +25,7 @@ def crawler(driver,cursor,end_date):
 
 		streams = driver.find_element_by_id('stream-items-id')
 		items = streams.find_elements_by_class_name("stream-item")	
-
 		size_diff = len(items)-len(result) 
-
 
 		if(len(result) > len(items)):
 			time.sleep(2)   
@@ -36,7 +34,7 @@ def crawler(driver,cursor,end_date):
 
 
 		for index,item in enumerate(items):
-			print("index: "+str(index))
+			# print("index: "+s tr(index))
 			if(index>=cursor):				
 				tmp_json = {}
 				data_id = item.get_attribute("data-item-id");
@@ -68,14 +66,10 @@ def crawler(driver,cursor,end_date):
 				tmp_json["like_cnt"] = reflections[3].text if len(reflections[3].text)!=0 else 0									
 				tmp_json["time"] = float(time_stamp) - (7 * 3600)
 				
-
 				end_date_timestamp = time.mktime(datetime.strptime(end_date, "%Y-%m-%d-%H:%M:%S").timetuple()) + (9*3600)
-				print(tmp_json["time"])
-				print(end_date_timestamp)
 				if(end_date_timestamp>tmp_json["time"]):
 					return -99
 
-				
 
 				user_id = tmp_json["user_id"]
 				user_nick = tmp_json["user_nick"]			
@@ -118,8 +112,7 @@ def runCrawler(search_word,end_date):
 	driver.get("https://twitter.com/search?q="+search_word+"&src=typd&lang=ko")
 	
 	while(1) :		
-		addedPage = crawler(driver,cursor,end_date)			
-		print(addedPage)
+		addedPage = crawler(driver,cursor,end_date)					
 		if addedPage == -99:
 			break;
 		driver.execute_script("window.scrollTo(0, document.body.scrollHeight)");	
@@ -137,20 +130,9 @@ def addMetaData(search_word):
 	final_dic["data_length"] = len(result)
 	return final_dic
 
-
-
-
-# print ('Number of arguments:', len(sys.argv), 'arguments.')
-# print ('Argument List:', str(sys.argv))
-
 if __name__=="__main__":
 	
-	# serched_time = "2018-06-05 13:11:11"
-	# t = time.mktime(datetime.strptime(s, "%Y-%m-%d %H:%M:%S").timetuple()) + (9*3600)
-	# print(t)
-	
 	search_name  = sys.argv[1]
-	
 	end_date = sys.argv[2]
 	tweetModel.setSearch(search_name,end_date,datetime.now().strftime('%Y-%m-%d-%H:%M:%S'))
 	
