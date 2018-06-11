@@ -2,37 +2,41 @@ from nlpy.analysis import Analaysis
 from manager import DBManager
 from model import tweetModel
 
-import os
-import json
-parent_dir = os.path.abspath('')
+# import os
+# import json
+# parent_dir = os.path.abspath('')
 
-with open(parent_dir+'/key/conf.json') as conf_json:
-    conf = json.load(conf_json)
+# with open(parent_dir+'/key/conf.json') as conf_json:
+# 	conf = json.load(conf_json)
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = conf["googleCredential"]
+# os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = conf["googleCredential"]
 
 def main():    	
+	print("main")
 	# Imports the Google Cloud client library
-	from google.cloud import language
-	from google.cloud.language import enums
-	from google.cloud.language import types
+	# from google.cloud import language
+	# from google.cloud.language import enums
+	# from google.cloud.language import types
 
-	# Instantiates a client
-	client = language.LanguageServiceClient()
+	# # Instantiates a client
+	# client = language.LanguageServiceClient()
 
-	# The text to analyze
-	text = u'Hello, world!'
-	document = types.Document(
-	    content=text,
-	    type=enums.Document.Type.PLAIN_TEXT)
+	# # The text to analyze
+	# text = """
+	# 김일성주체사상 찬양하는 문죄인/그리고 더러운강간당 공산당놈들/일단 통일이되든 핵을포기하든 북한이 무엇을하든 주사파 문죄인 더러운강간당 놈들이 이적질한것은 마땅히 죄를 받아야할것이다! 문죄인 너 아무리 북한을이용해 물타기해도 조만간 미국이아닌 대한민국 국민들에게 참수되야할 것이다
+	# """
 
-	# Detects the sentiment of the text
-	sentiment = client.analyze_sentiment(document=document).document_sentiment
+	# document = types.Document(
+	#     content=text,
+	#     type=enums.Document.Type.PLAIN_TEXT)
 
-	print('Text: {}'.format(text))
-	print('Sentiment: {}, {}'.format(sentiment.score, sentiment.magnitude))
-
-	# a = Analaysis()	
+	# # Detects the sentiment of the text
+	# sentiment = client.analyze_sentiment(document=document).document_sentiment
+	# print('Text: {}'.format(text))
+	# print('Sentiment: {}, {}'.format(sentiment.score, sentiment.magnitude))
+	# tweetModel.setTweetSentiment("1005395609593917440",sentiment.score,sentiment.magnitude)
+ 	# tweetModel.setTweetSentiment("1005395609593917440",sentiment.score,sentiment.magnitude)
+ 	# a = Analaysis()	
 
 
 	# tweets = tweetModel.getAllTweets()

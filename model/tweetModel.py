@@ -88,6 +88,17 @@ def getAllValidTweets():
 					,
 					()
 				))						
+def setTweetSentiment(data_id,sentiment_score,sentiment_magnitude):
+	DBManager.query(
+					"""
+					UPDATE uni_tweets 
+					SET sentiment_score = %s,sentiment_magnitude = %s
+					where data_id = %s
+					"""
+					,
+					(sentiment_score,sentiment_magnitude,data_id)
+				)			
+
 
 def setTweetValid(data_id):
 	DBManager.query(
@@ -99,3 +110,39 @@ def setTweetValid(data_id):
 					,
 					(data_id,)
 				)			
+
+
+def getSegmentGood():
+	return util.fetch_all_json(
+				DBManager.query(
+					"""
+					SELECT count(*) as good 
+					FROM uni_tweets 
+					WHERE sentiment_score > 0.25
+					"""
+					,
+					()
+				))		
+def getSegmentNoraml():	
+	return util.fetch_all_json(
+				DBManager.query(
+					"""
+					SELECT count(*) as normal 
+					FROM uni_tweets 
+					WHERE sentiment_score > -0.25 AND sentiment_score < 0.25
+					"""
+					,
+					()
+				))		
+
+def getSegmentBad():	
+	return util.fetch_all_json(
+				DBManager.query(
+					"""
+					SELECT count(*) as bad 
+					FROM uni_tweets 
+					WHERE sentiment_score < -0.25
+					"""
+					,
+					()
+				))		
