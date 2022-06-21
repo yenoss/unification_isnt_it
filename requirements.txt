@@ -1,6 +1,6 @@
 JPype1==0.6.3
 konlpy==0.4.4
-numpy==1.14.3
+numpy==1.22.0
 selenium==3.12.0
 appnope==0.1.0
 backcall==0.1.0
@@ -32,7 +32,7 @@ jupyter-core==4.4.0
 kiwisolver==1.0.1
 konlpy==0.4.4
 matplotlib==2.2.2
-numpy==1.14.3
+numpy==1.22.0
 parso==0.2.1
 pexpect==4.6.0
 pickleshare==0.7.4
